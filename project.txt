@@ -1,0 +1,5 @@
+# Requirements 
+- Langchain 
+- OpenAI - GPT 3.5 
+- VectorDB - FAISS (local VDB) 
+- Fast API
