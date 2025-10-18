@@ -1,4 +1,4 @@
-# 📄 LLM Interview Question&Answer Generator
+# 📄 LLM Question&Answer Generator
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io)
@@ -7,7 +7,6 @@
 [![LangChain](https://img.shields.io/badge/Framework-LangChain-FE1A42.svg)](https://www.langchain.com/)
 [![Ollama](https://img.shields.io/badge/Local%20LLM-Ollama%20%7C%20Llama3-000000.svg)](https://ollama.com/)
 [![FAISS](https://img.shields.io/badge/Vector%20Store-FAISS-red.svg)](https://github.com/facebookresearch/faiss)
-[![Google GenAI](https://img.shields.io/badge/Embeddings-Google%20GenAI-4285F4.svg)](https://ai.google.dev/)
 [![PDF Processing](https://img.shields.io/badge/PDF%20Processing-PyPDF-FF0000.svg)](https://pypdf.readthedocs.io/en/stable/)
 
 A powerful AI-powered application that generates interview questions and answers from PDF documents. Available in both web interface (FastAPI) and Streamlit versions.
