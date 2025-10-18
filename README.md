@@ -150,8 +150,7 @@ interview-questions-project/
 
 - Integration with **evaluation metrics** for automatic scoring  
 - Adding support for **multi-lingual question generation**  
-- Building a **Streamlit UI** for interactive question generation  
-- Incorporating **context memory** to improve continuity between questions  
+
 
 ## 🤝 Contributing
 
