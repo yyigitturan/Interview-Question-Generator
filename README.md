@@ -29,15 +29,13 @@ The code demonstrates how to handle **multi-step reasoning** and **text-to-quest
 
 ![flow](flow.png)
 
-1. Load input text documents (e.g., book excerpts, articles, or training data).  
-2. Split text into chunks for processing.  
-3. Use an LLM pipeline (`RefineDocumentsChain` → `LLMChain`) to:
-   - Extract semantic meaning
-   - Generate relevant questions
-   - Refine outputs iteratively  
-4. Evaluate the coherence and difficulty of generated questions.
+1. **PDF Extraction** — Extracts and cleans text from the uploaded file.  
+2. **Text Chunking** — Splits text into manageable overlapping chunks.  
+3. **Embedding & Retrieval** — Creates vector embeddings and stores them in **FAISS**.  
+4. **Question Generation** — Uses Llama3 (via Ollama) to produce meaningful questions.  
+5. **Answer Generation** — Retrieves context and generates grounded answers.  
+6. **Export** — Saves all pairs to a downloadable CSV file.  
    
-
 ---
 
 ## ✨ Key Features
@@ -132,16 +130,6 @@ interview-questions-project/
 └── README.md               # Documentation
 ```
 
----
-
-## 🧠 How It Works
-
-1. **PDF Extraction** — Extracts and cleans text from the uploaded file.  
-2. **Text Chunking** — Splits text into manageable overlapping chunks.  
-3. **Embedding & Retrieval** — Creates vector embeddings and stores them in **FAISS**.  
-4. **Question Generation** — Uses Llama3 (via Ollama) to produce meaningful questions.  
-5. **Answer Generation** — Retrieves context and generates grounded answers.  
-6. **Export** — Saves all pairs to a downloadable CSV file.  
 
 ---
 
