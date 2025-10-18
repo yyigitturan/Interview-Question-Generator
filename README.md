@@ -1,227 +1,184 @@
-# 📄 LLM Question&Answer Generator
+# 📄 LLM Question & Answer Generator
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io)
 [![LangChain](https://img.shields.io/badge/Framework-LangChain-FE1A42.svg)](https://www.langchain.com/)
 [![Ollama](https://img.shields.io/badge/Local%20LLM-Ollama%20%7C%20Llama3-000000.svg)](https://ollama.com/)
-[![FAISS](https://img.shields.io/badge/Vector%20Store-FAISS-red.svg)](https://github.com/facebookresearch/faiss)
-[![PDF Processing](https://img.shields.io/badge/PDF%20Processing-PyPDF-FF0000.svg)](https://pypdf.readthedocs.io/en/stable/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A powerful AI-powered application that generates interview questions and answers from PDF documents. Available in both web interface (FastAPI) and Streamlit versions.
+A powerful **AI-powered application** that generates structured interview questions and detailed answers directly from PDF documents.  
+Built on **Retrieval Augmented Generation (RAG)** architecture with a local **Large Language Model (LLM)** for accurate, context-aware Q&A generation.
 
-## ✨ Features
+This project focuses on **automatic question generation using Large Language Models (LLMs)**. The notebook demonstrates how to extract information from text passages and generate meaningful, context-aware questions automatically — a process useful for building intelligent tutoring systems, interview preparation tools, and data-driven content curation systems.
 
-- **PDF Processing**: Extract text from PDF documents
-- **AI-Powered Q&A Generation**: Uses Ollama with llama3 model for intelligent question and answer generation
-- **Multiple Interfaces**: Choose between web app or Streamlit interface
-- **Flexible Embeddings**: Supports both Google Generative AI and HuggingFace embeddings
-- **CSV Export**: Download generated questions and answers as CSV files
-- **Error Handling**: Robust error handling and user feedback
+## 📘 Project Overview
 
-## 🚀 Quick Start
+The notebook (`experiment.ipynb`) contains a workflow for:
+
+- Loading and preprocessing text data  
+- Using **LLM-based pipelines** to generate contextually relevant questions  
+- Refining question quality through prompt engineering  
+- Automating evaluation of generated questions  
+- Experimenting with different **chain-based architectures** (`LLMChain`, `RefineDocumentsChain`, etc.) for document-level understanding
+
+The code demonstrates how to handle **multi-step reasoning** and **text-to-question transformation** efficiently.
+
+---
+## ⚙️ How It Works
+
+![flow](flow.png)
+
+1. Load input text documents (e.g., book excerpts, articles, or training data).  
+2. Split text into chunks for processing.  
+3. Use an LLM pipeline (`RefineDocumentsChain` → `LLMChain`) to:
+   - Extract semantic meaning
+   - Generate relevant questions
+   - Refine outputs iteratively  
+4. Evaluate the coherence and difficulty of generated questions.
+   
+
+---
+
+## ✨ Key Features
+
+- 🔍 **Intelligent Q&A Generation** — Generates relevant questions and well-structured answers using **Ollama (Llama3)**.  
+- 🧠 **RAG Architecture** — Uses **FAISS** for efficient document retrieval and grounding.  
+- ⚡ **Dual Interfaces** — Access via both **FastAPI** (web app) and **Streamlit** (interactive dashboard).  
+- 🧩 **Flexible Embeddings** — Powered by **HuggingFace Sentence Transformers** for semantic search.  
+- 📤 **Export Results** — Download generated Q&A pairs as a clean **CSV file**.  
+
+---
+
+
+## 🖥️ Interfaces
+
+<div align="center">
+
+### FastAPI Web Application  
+<img src="1.png" alt="FastAPI Interface" style="max-width:80%;border-radius:8px;margin-bottom:20px;">
+
+### Streamlit Dashboard  
+<img src="2.png" alt="Streamlit Interface" style="max-width:80%;border-radius:8px;">
+
+</div>
+
+---
+
+## ⚙️ Setup and Usage
 
 ### Prerequisites
 
-- Python 3.8 or higher
-- [Ollama](https://ollama.ai/) installed and running
-- llama3 model installed in Ollama
-
-### Installation
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/interview-questions-project.git
-   cd interview-questions-project
-   ```
-
-2. **Run the installation script**:
-   ```bash
-   chmod +x *.sh
-   ./install_dependencies.sh
-   ```
-
-3. **Start Ollama** (if not running):
-   ```bash
-   ollama serve
-   ollama pull llama3
-   ```
-
-### Running the Applications
-
-#### Option 1: Web Application (FastAPI)
-```bash
-./start_web_app.sh
-```
-- Access at: http://localhost:8080
-- API docs at: http://localhost:8080/docs
-
-#### Option 2: Streamlit Application
-```bash
-./start_streamlit.sh
-```
-- Access at: http://localhost:8501
-
-## 🔧 Configuration
-
-### Environment Variables (Optional)
-
-Create a `.env` file in the project root:
-
-```env
-# Google Generative AI API Key (optional - for better embeddings)
-GOOGLE_API_KEY=your_google_api_key_here
-
-# Ollama Configuration
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama3
-
-# Application Settings
-MAX_PAGES=5
-CHUNK_SIZE=10000
-CHUNK_OVERLAP=200
-```
+- Python **3.8+**
+- [Ollama](https://ollama.ai/) installed and running locally  
 
 ### Ollama Setup
 
-1. **Install Ollama**: Visit [ollama.ai](https://ollama.ai/)
-2. **Start Ollama service**:
-   ```bash
-   ollama serve
-   ```
-3. **Install llama3 model**:
-   ```bash
-   ollama pull llama3
-   ```
+```bash
+# Install and run Ollama
+ollama serve
 
-## 📁 Project Structure
+# Pull the required model
+ollama pull llama3
+```
+
+### Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 🚀 Running the Applications
+
+### 1️⃣ FastAPI Web Application
+
+```bash
+python app.py
+```
+
+Then open: [http://localhost:8080](http://localhost:8080)
+
+### 2️⃣ Streamlit Application
+
+```bash
+streamlit run streamlit_app.py
+```
+
+Then open: [http://localhost:8501](http://localhost:8501)
+
+---
+
+## 🧩 Project Structure
 
 ```
 interview-questions-project/
 ├── src/
-│   ├── helper.py          # Core LLM pipeline functions
-│   ├── prompt.py          # Question generation prompts
-│   └── config.py          # Configuration management
+│   ├── helper.py           # Core pipeline functions
+│   ├── prompt.py           # LLM prompt templates
+│   └── config.py           # Configuration settings
 ├── templates/
-│   └── index.html         # Web interface template
+│   └── index.html          # FastAPI web template
 ├── static/
-│   ├── docs/              # Uploaded PDF files
-│   └── output/            # Generated CSV files
-├── app.py                 # FastAPI web application
-├── streamlit_app.py       # Streamlit application
-├── requirements.txt       # Python dependencies
-├── install_dependencies.sh # Installation script
-├── start_web_app.sh       # Web app startup script
-├── start_streamlit.sh     # Streamlit startup script
-└── README.md              # This file
+│   ├── docs/               # Uploaded PDF files
+│   └── output/             # Generated CSV results
+├── app.py                  # FastAPI app entry point
+├── streamlit_app.py        # Streamlit dashboard
+├── requirements.txt        # Dependencies
+├── install_dependencies.sh # Setup script
+├── start_web_app.sh        # Start FastAPI app
+├── start_streamlit.sh      # Start Streamlit app
+└── README.md               # Documentation
 ```
 
-## 🎯 Usage
+---
 
-### Web Application
+## 🧠 How It Works
 
-1. Open http://localhost:8080
-2. Upload a PDF file (max 10MB)
-3. Click "Generate Q&A"
-4. Download the generated CSV file
+1. **PDF Extraction** — Extracts and cleans text from the uploaded file.  
+2. **Text Chunking** — Splits text into manageable overlapping chunks.  
+3. **Embedding & Retrieval** — Creates vector embeddings and stores them in **FAISS**.  
+4. **Question Generation** — Uses Llama3 (via Ollama) to produce meaningful questions.  
+5. **Answer Generation** — Retrieves context and generates grounded answers.  
+6. **Export** — Saves all pairs to a downloadable CSV file.  
 
-### Streamlit Application
+---
 
-1. Open http://localhost:8501
-2. Configure Ollama settings in the sidebar
-3. Upload a PDF file
-4. Click "Generate Questions & Answers"
-5. View results and download CSV
+## 🛠️ Tech Stack
 
-## 🔍 How It Works
+| Component | Technology |
+|------------|-------------|
+| **LLM** | Ollama (Llama3) |
+| **Frameworks** | FastAPI, Streamlit |
+| **RAG Engine** | LangChain + FAISS |
+| **Embeddings** | Sentence Transformers (`all-MiniLM-L6-v2`) |
+| **PDF Processing** | PyPDF / pdfplumber |
+| **Storage** | Local file system (CSV export) |
 
-1. **PDF Processing**: Extracts text from uploaded PDF files
-2. **Text Chunking**: Splits content into manageable chunks
-3. **Question Generation**: Uses AI to generate relevant interview questions
-4. **Answer Generation**: Creates comprehensive answers using RAG (Retrieval Augmented Generation)
-5. **Export**: Saves results as CSV for easy use
+---
 
-## 🛠️ Technical Details
+## 🚀 Future Improvements
 
-### Dependencies
-
-- **LangChain**: Framework for LLM applications
-- **Ollama**: Local LLM inference
-- **FastAPI**: Web framework
-- **Streamlit**: Data app framework
-- **FAISS**: Vector similarity search
-- **PyPDF**: PDF text extraction
-
-### Models Used
-
-- **LLM**: llama3 (via Ollama)
-- **Embeddings**: Google Generative AI or HuggingFace (fallback)
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **Ollama not running**:
-   ```bash
-   ollama serve
-   ```
-
-2. **llama3 model not found**:
-   ```bash
-   ollama pull llama3
-   ```
-
-3. **Port already in use**:
-   - Web app: Change port in `start_web_app.sh`
-   - Streamlit: Change port in `start_streamlit.sh`
-
-4. **Memory issues**:
-   - Reduce `CHUNK_SIZE` in config
-   - Use smaller PDF files
-
-5. **NumPy compatibility warnings**:
-   - These warnings are harmless and don't affect functionality
-   - The application will work correctly despite the warnings
-
-6. **Architecture compatibility issues**:
-   - Always use the virtual environment: `source venv/bin/activate`
-   - If you encounter import errors, reinstall dependencies in the venv
-
-### Error Messages
-
-- **"Ollama is not running"**: Start Ollama service
-- **"Model not found"**: Install llama3 model
-- **"PDF file not found"**: Check file path and permissions
-- **"No content found"**: Ensure PDF contains extractable text
-
-## 📝 API Endpoints (Web App)
-
-- `GET /`: Main web interface
-- `POST /upload`: Upload PDF file
-- `POST /analyze`: Generate questions and answers
-- `GET /download/{filename}`: Download generated CSV
-- `GET /docs`: API documentation
+- Integration with **evaluation metrics** for automatic scoring  
+- Adding support for **multi-lingual question generation**  
+- Building a **Streamlit UI** for interactive question generation  
+- Incorporating **context memory** to improve continuity between questions  
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+Contributions are welcome!  
+To contribute:
+1. Fork the repo  
+2. Create a feature branch  
+3. Make your changes  
+4. Test thoroughly  
+5. Open a pull request  
 
-## 📄 License
+---
 
-This project is open source and available under the MIT License.
+## 📜 License
 
-## 👨‍💻 Author
+This project is released under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
-Author information redacted
- - Email: redacted
-
-## 🙏 Acknowledgments
-
-- Ollama team for the excellent local LLM platform
-- LangChain team for the comprehensive LLM framework
-- FastAPI and Streamlit teams for the web frameworks
+---
