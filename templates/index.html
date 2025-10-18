@@ -2,184 +2,528 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <title>Interview Question Generator | AI-Powered Q&A Creation</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     
     <style>
-        #result, #download {
+        /* Color Palette */
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --info-color: #4cc9f0;
+            --dark-color: #1a1a2e;
+            --light-bg: #f5f7fb;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+        
+        /* Card Style */
+        .card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* Button Style */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 10px 24px;
+            font-weight: 600;
+            border-radius: 8px;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #a0aec0;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: #ffffff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+        }
+        
+        .file-info {
+            background-color: #e9ecef;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
             display: none;
+            align-items: center; /* file-info'yu ortalamak için eklendi */
+            justify-content: space-between; /* İçeriği yaymak için eklendi */
+        }
+        
+        /* Loader */
+        .loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(67, 97, 238, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Result Section */
+        .result-section {
+            display: none; /* Hidden by default */
+        }
+        
+        .download-btn {
+            background-color: #2dce89; 
+            border-color: #2dce89;
+            color: white;
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .font-large {
-            font-size: 150px;
+        .download-btn:hover {
+            background-color: #26b379;
+            border-color: #26b379;
+        }
+        
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        .step-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .pdf-preview {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
-<body class="bg-dark">
-    <section>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="cl-sm-12 text-center p-5 text-white">
-                    <h3>Interview Question Creator</h3>
-                </div>
-            </div>
-
-        </div>
-    </section>
-    <section class="mb-4">
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <div class="row">
-                <div class="cl-sm-12">
-                    <div class="card p-5 shadow border-0 m-3">
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label">Upload your PDF file here</label>
-                            <div class="input-group mb-3">
-                                <input type="file" class="form-control" id="pdf-file">
-                                <label class="input-group-text" for="pdf-file">Max No. of Pages is 5</label>
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-robot me-2"></i>YGT AI Q&A Generator
+            </a>
+        </div>
+    </nav>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-5 fw-bold mb-4">Generate Questions & Answers from Your Documents</h1>
+                    <p class="lead mb-4">Upload your PDF documents and let our AI create relevant interview questions and answers in seconds.</p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-brain text-info me-2"></i>
+                            <span>Advanced AI Analysis</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-file-export text-info me-2"></i>
+                            <span>Export to CSV</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-tachometer-alt text-info me-2"></i>
+                            <span>Fast Results</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card p-4 mt-4 mt-lg-0">
+                        <h4 class="mb-4">How It Works</h4>
+                        
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div>
+                                <h6 class="mb-1">Upload Your PDF</h6>
+                                <p class="mb-0 text-muted">Drag and drop or select your document.</p>
                             </div>
-                          </div>
-                          <div class="mb-3 text-end">
-                            <button type="button" id="upload-btn" class="btn btn-md btn-success">Generate Q&A</button>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div>
+                                <h6 class="mb-1">Start AI Analysis</h6>
+                                <p class="mb-0 text-muted">The AI analyzes the content and derives questions.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div>
+                                <h6 class="mb-1">Download Results</h6>
+                                <p class="mb-0 text-muted">Download your generated Q&A in CSV format.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <section id="result">
+
+    <section class="py-5">
         <div class="container">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="card shadow border-0 p-3 ms-3">
-                        <embed id="view-pdf" src="" width="100%" height="600px" />
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="card shadow border-0 p-5 me-3">
-                        <div id="loader" class="text-center">
-                            <i class="fa-solid fa-spinner fa-spin-pulse font-large"></i>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card p-4">
+                        <h3 class="text-center mb-4">Upload Your Document</h3>
+                        
+                        <div class="upload-area" id="upload-area">
+                            <input type="file" id="pdf-file" accept=".pdf" hidden>
+                            <div class="upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h5>Drag & Drop your PDF file here</h5>
+                            <p class="text-muted">or click to browse files</p>
+                            <p class="text-muted small">Larger files may take longer. PDF files only.</p>
                         </div>
-                        <div id="download" class="text-center">
-                            <a href="" id="download-btn" class="btn btn-md btn-warning" download><i class="fas fa-download font-large"></i></a>
+                        
+                        <div class="file-info" id="file-info">
+                            <div>
+                                <i class="fas fa-file-pdf text-danger me-2"></i>
+                                <span id="file-name"></span>
+                            </div>
+                            <span id="file-size" class="text-muted"></span>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button type="button" id="upload-btn" class="btn btn-primary btn-lg" disabled>
+                                <i class="fas fa-magic me-2"></i>Generate Questions & Answers
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-    <script src="https://kit.fontawesome.com/1da99de032.js" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
 
-    <script>
-        let result = document.getElementById('result');
-        let loader = document.getElementById('loader');
-        let download = document.getElementById('download');
-        let viewPdf = document.getElementById('view-pdf');
-        let downloadBtn = document.getElementById('download-btn');
-
-        $(document).ready(function () {
-            $("#upload-btn").click(async function (event) {
-                event.preventDefault();
-                const formData = new FormData();
-                const fileInput = document.getElementById('pdf-file') ;  
-                var file = fileInput.files[0];           
+    <section class="py-5 result-section" id="result-section">
+        <div class="container">
+            <h2 class="text-center mb-5">Generated Questions & Answers</h2>
+            
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Document Preview</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="pdf-preview">
+                                <embed id="view-pdf" src="" width="100%" height="500px" type="application/pdf">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
-                formData.append('pdf_file', file);
-                formData.append('filename', file.name)
-                let response = await fetch('/upload', {
-                    method: "POST",
-                    body: formData                
-                });                
-                processUploadResponse(response);  
-            });
-        });
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Generated Content Status</h5>
+                        </div>
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                            <div class="loader" id="loader">
+                                <div class="spinner"></div>
+                                <h5>Generating Questions & Answers</h5>
+                                <p class="text-muted">This may take a few moments...</p>
+                            </div>
+                            
+                            <div class="text-center py-5" id="download-section" style="display: none;">
+                                <div class="mb-4">
+                                    <i class="fas fa-check-circle text-success" style="font-size: 80px;"></i>
+                                </div>
+                                <h4 class="mb-3">Questions Generated Successfully!</h4>
+                                <p class="text-muted mb-4">Your interview questions and answers are ready for download.</p>
+                                <a href="#" id="download-btn" class="btn download-btn">
+                                    <i class="fas fa-download me-2"></i>Download CSV File
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        async function processUploadResponse(response){
-            switch (response.status) {
-                case 400:  
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops!!!',
-                        text: "Sorry, Couldn't be able to upload your pdf!!!",
-                        confirmButtonColor: "#15011d"
-                    }).then(function() {
-                        window.location.reload();
-                    });
-                  break;
-                case 200:                 
-                    var json = await response.json();
-                    if (json.msg == "error") {
+    <footer>
+        <div class="container">
+            <div class="text-center">
+                <p class="mb-0 text-muted">&copy; 2026 YGT AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('pdf-file');
+            const fileInfo = document.getElementById('file-info');
+            const fileNameSpan = document.getElementById('file-name');
+            const fileSizeSpan = document.getElementById('file-size');
+            const uploadBtn = document.getElementById('upload-btn');
+            const resultSection = document.getElementById('result-section');
+            const loader = document.getElementById('loader');
+            const downloadSection = document.getElementById('download-section');
+            const viewPdf = document.getElementById('view-pdf');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            // --- Helper Functions ---
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            function resetFileInput() {
+                fileInput.value = '';
+                fileInfo.style.display = 'none';
+                uploadBtn.disabled = true;
+                resetUploadButton();
+            }
+
+            function resetUploadButton() {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = '<i class="fas fa-magic me-2"></i>Generate Questions & Answers';
+            }
+            
+            // --- File Selection Handler ---
+            function handleFileSelection() {
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    
+                    // File Type Validation
+                    if (file.type !== 'application/pdf') {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Oops!',
-                            text: 'Maximum number of pages exceeded.',
-                            confirmButtonColor: "#545454"
-                        }).then(function() {
-                            window.location.reload();
+                            title: 'Invalid File Type',
+                            text: 'Please upload a PDF file.',
+                            confirmButtonColor: "#4361ee"
                         });
-                    }else {
-                        result.style.display = "block";
-                        loader.style.display = "block";
-                        download.style.display = "none";
-                        viewPdf.setAttribute('src', "../"+json.pdf_filename)
-                        viewPdf.setAttribute('preload', 'auto');
-                        const formData = new FormData();
-                        formData.append('pdf_filename', json.pdf_filename)
-                        fetch('/analyze', {
-                            method: "POST",
-                            body: formData                
-                        }).then(processAnalyzeResponse)  
+                        resetFileInput();
+                        return;
                     }
                     
-                    break;
-                default:
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops!!!',
-                        text: "There is a "+response.status+" error. Please contact admin for support.",
-                        confirmButtonColor: "#15011d"
-                    }).then(function() {
-                        window.location.reload();
-                    });
-            }
-        }
+                    // Frontend Size Check is intentionally removed to allow large files.
+                    // The limit is now handled by the server/proxy.
 
-        async function processAnalyzeResponse(response){            
-            switch (response.status) {
-                case 400:  
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops!!!',
-                        text: "Sorry, Couldn't be able to analyze your pdf!!!",
-                        confirmButtonColor: "#15011d"
-                    }).then(function() {
-                        window.location.reload();
-                    });
-                  break;
-                case 200:                     
-                    loader.style.display = "none";
-                    download.style.display = "block";
-                    var json = await response.json();
-                    downloadBtn.setAttribute('href', "../"+json.output_file)
-                    break;
-                default:
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops!!!',
-                        text: "There is a "+response.status+" error. Please contact admin for support.",
-                        confirmButtonColor: "#15011d"
-                    }).then(function() {
-                        window.location.reload();
-                    });
+                    // Display file info
+                    fileNameSpan.textContent = file.name;
+                    fileSizeSpan.textContent = formatFileSize(file.size);
+                    fileInfo.style.display = 'flex';
+                    uploadBtn.disabled = false;
+                } else {
+                    resetFileInput();
+                }
             }
-        }
+            
+            // --- Event Listeners ---
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFileSelection);
 
-        
+            uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileSelection();
+                }
+            });
+            
+            // --- API Call Handlers ---
+            uploadBtn.addEventListener('click', async function() {
+                if (!fileInput.files.length) return;
+                
+                const formData = new FormData();
+                formData.append('pdf_file', fileInput.files[0]);
+                
+                // Show Loading State
+                uploadBtn.disabled = true;
+                uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+                
+                try {
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    await processUploadResponse(response);
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Upload Failed',
+                        text: 'A network error occurred while uploading your file. Please try again.',
+                        confirmButtonColor: "#4361ee"
+                    });
+                    resetUploadButton();
+                }
+            });
+            
+            async function processUploadResponse(response) {
+                
+                switch (response.status) {
+                    case 400: // Bad Request (File Type or Backend Control Error)
+                        const errorJson400 = await response.json();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Upload Failed',
+                            text: errorJson400.detail || 'There was an issue processing your PDF file.',
+                            confirmButtonColor: "#4361ee"
+                        });
+                        resetFileInput();
+                        break;
+                        
+                    case 200:
+                        const json = await response.json();
+                        
+                        // Show Result Section
+                        resultSection.style.display = 'block';
+                        loader.style.display = 'flex';
+                        downloadSection.style.display = 'none';
+                        resultSection.scrollIntoView({ behavior: 'smooth' });
+                        
+                        // Set PDF Preview
+                        viewPdf.setAttribute('src', "../" + json.pdf_filename);
+                        
+                        // Start Analysis
+                        uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...';
+                        const analyzeFormData = new FormData();
+                        analyzeFormData.append('pdf_filename', json.pdf_filename);
+                        
+                        try {
+                            const analyzeResponse = await fetch('/analyze', {
+                                method: 'POST',
+                                body: analyzeFormData
+                            });
+                            
+                            await processAnalyzeResponse(analyzeResponse);
+                        } catch (error) {
+                            console.error('Analysis error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Analysis Failed',
+                                text: 'An error occurred while analyzing your document.',
+                                confirmButtonColor: "#4361ee"
+                            });
+                            resetFileInput();
+                        }
+                        
+                        break;
+                        
+                    case 413: // Payload Too Large (Reverse Proxy or Server Limit)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'File Too Large',
+                            text: 'The file you uploaded exceeds the maximum size allowed by the server. Please try a smaller file.',
+                            confirmButtonColor: "#d33"
+                        });
+                        resetFileInput();
+                        break;
+                        
+                    default: // All other server errors (500, etc.)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Server Error',
+                            text: 'Received an unexpected server error (Code: ' + response.status + ').',
+                            confirmButtonColor: "#d33"
+                        });
+                        resetFileInput();
+                }
+            }
+            
+            async function processAnalyzeResponse(response) {
+                resetUploadButton(); // Restore the upload button after analysis is complete
+                
+                switch (response.status) {
+                    case 400:
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Analysis Failed',
+                            text: 'Your PDF file could not be analyzed.',
+                            confirmButtonColor: "#4361ee"
+                        });
+                        break;
+                        
+                    case 200:
+                        const json = await response.json();
+                        loader.style.display = 'none';
+                        downloadSection.style.display = 'block';
+                        downloadBtn.setAttribute('href', "../" + json.output_file);
+                        break;
+                        
+                    default:
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Server Error',
+                            text: 'An unexpected error occurred during analysis (Code: ' + response.status + ').',
+                            confirmButtonColor: "#d33"
+                        });
+                }
+            }
+        });
     </script>
 </body>
 </html>

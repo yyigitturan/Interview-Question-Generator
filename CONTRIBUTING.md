@@ -1,4 +1,4 @@
-# Contributing to PDF Interview Question Generator
+# Contributing to LLM Interview Question Answer Generator
 
 Thank you for your interest in contributing to this project! This document provides guidelines for contributing to the PDF Interview Question Generator.
 

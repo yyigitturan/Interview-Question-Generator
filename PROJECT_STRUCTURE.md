@@ -41,7 +41,6 @@ interview-questions-project/
 - **`app.py`**: FastAPI web application with REST API endpoints
 - **`streamlit_app.py`**: Streamlit interface for interactive use
 - **`requirements.txt`**: All Python dependencies with versions
-- **`install_dependencies.sh`**: Automated setup script
 
 ## Ignored Files
 

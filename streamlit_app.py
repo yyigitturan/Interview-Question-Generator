@@ -9,13 +9,13 @@ from src.config import *
 
 # Page configuration
 st.set_page_config(
-    page_title="PDF Interview Question Generator",
+    page_title="LLM Question Answer Generator",
     page_icon="📄",
     layout="wide"
 )
 
-st.title("📄 PDF Interview Question Generator")
-st.markdown("Upload your PDF file and generate interview questions and answers automatically.")
+st.title("📄 LLM Question Answer Generator")
+st.markdown("Upload your PDF file and generate questions and answers automatically.")
 
 # Sidebar for configuration
 with st.sidebar:
@@ -26,15 +26,8 @@ with st.sidebar:
     ollama_url = st.text_input("Ollama URL", value=OLLAMA_BASE_URL)
     model_name = st.text_input("Model Name", value=OLLAMA_MODEL)
     
-    # API Key settings
-    google_api_key = st.text_input("Google API Key (Optional)", value=GOOGLE_API_KEY, type="password")
-    if google_api_key:
-        st.success("Google API Key provided - will use Google embeddings")
-    else:
-        st.info("No Google API Key - will use HuggingFace embeddings")
-
 # Main content
-uploaded_file = st.file_uploader("Upload your PDF file", type="pdf", help="Maximum recommended: 5 pages")
+uploaded_file = st.file_uploader("Upload your PDF file", type="pdf", help="")
 
 if uploaded_file is not None:
     # Display file info
@@ -59,7 +52,7 @@ if uploaded_file is not None:
             import src.config as config
             config.OLLAMA_BASE_URL = ollama_url
             config.OLLAMA_MODEL = model_name
-            config.GOOGLE_API_KEY = google_api_key
+
             
             status_text.text("🤖 Generating questions...")
             progress_bar.progress(40)

@@ -1,4 +1,3 @@
-# app.py
 from fastapi import FastAPI, Request, File, UploadFile, Form, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -6,15 +5,14 @@ from fastapi.templating import Jinja2Templates
 import uvicorn
 import os
 import aiofiles
-import json
+import uuid 
 import csv
-import tempfile
 from src.helper import llm_pipeline, file_preprocessing
 from src.config import *
 
-# FastAPI nesnesini "app" olarak tanımlıyoruz.
+
 app = FastAPI(
-    title="PDF Interview Question Generator",
+    title="LLM Question Answer Generator",
     description="Generate interview questions and answers from PDF documents",
     version="1.0.0"
 )
@@ -32,51 +30,47 @@ async def index(request: Request):
 
 @app.post("/upload")
 async def upload_pdf(pdf_file: UploadFile = File(...)):
+    """
+    PDF dosyasını yükler ve kaydeder. Boyut veya sayfa sınırı kontrolü yoktur.
+    """
     try:
-        # Validate file type
+        
         if not pdf_file.filename.lower().endswith('.pdf'):
             raise HTTPException(status_code=400, detail="Only PDF files are allowed")
-        
-        # Validate file size (max 10MB)
-        content = await pdf_file.read()
-        if len(content) > 10 * 1024 * 1024:  # 10MB
-            raise HTTPException(status_code=400, detail="File size too large. Maximum 10MB allowed.")
-        
-        # Create unique filename to avoid conflicts
-        import uuid
-        unique_filename = f"{uuid.uuid4()}_{pdf_file.filename}"
+
+        unique_filename = f"{uuid.uuid4()}_{pdf_file.filename.replace(' ', '_')}"
         pdf_path = os.path.join("static/docs", unique_filename)
+
+        content = await pdf_file.read()
 
         async with aiofiles.open(pdf_path, 'wb') as f:
             await f.write(content)
-        
+
         return JSONResponse(content={"msg": "success", "pdf_filename": pdf_path})
     
     except Exception as e:
+        
         raise HTTPException(status_code=500, detail=f"Error uploading file: {str(e)}")
 
 @app.post("/analyze")
 async def analyze_pdf(pdf_filename: str = Form(...)):
     try:
-        # Validate file exists
+     
         if not os.path.exists(pdf_filename):
             raise HTTPException(status_code=404, detail="PDF file not found")
         
-        # Run the LLM pipeline
+        
         answer_generation_chain, ques_list = llm_pipeline(pdf_filename)
         
-        # Create unique output filename
-        import uuid
         output_filename = f"QA_{uuid.uuid4().hex[:8]}.csv"
         output_file = os.path.join("static/output", output_filename)
         
-        # Generate Q&A and save to CSV
         with open(output_file, "w", newline="", encoding="utf-8") as csvfile:
             csv_writer = csv.writer(csvfile)
             csv_writer.writerow(["Question", "Answer"])
 
             for question in ques_list:
-                if question.strip():  # Only process non-empty questions
+                if question.strip():  
                     try:
                         answer = answer_generation_chain.invoke({"query": question})
                         csv_writer.writerow([question, answer["result"]])
@@ -90,6 +84,7 @@ async def analyze_pdf(pdf_filename: str = Form(...)):
         })
     
     except Exception as e:
+    
         raise HTTPException(status_code=500, detail=f"Error analyzing PDF: {str(e)}")
 
 @app.get("/download/{filename}")
